@@ -27,7 +27,7 @@ public class DressModel {
             	try {
             		
             		// 링크
-	               String url = "https://www.labitorosa.com" + link.get(j).attr("href");
+	               String url = "https://www.labitorosa.com" + link.get(j).attr("href"); 
 	               System.out.println(url);
 	               
 	               Document doc2 = Jsoup.connect(url).get();
