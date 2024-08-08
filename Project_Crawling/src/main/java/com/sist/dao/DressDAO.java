@@ -1,7 +1,7 @@
 package com.sist.dao;
 import java.util.*;
 
-import com.sist.vo.DressVO;
+import com.sist.vo.*;
 
 import java.sql.*;
 public class DressDAO {
@@ -60,7 +60,7 @@ public class DressDAO {
                + "VALUES(fh_fno_seq.nextval,?,?,?,?,?,?,?,?)";
          ps=conn.prepareStatement(sql);
          ps.setInt(1, vo.getD_no());
-         ps.setString(2, "https://www.menupan.com" + vo.getD_image());
+         ps.setString(2, "https:" + vo.getD_image());
          ps.setString(3, vo.getD_subject());
          ps.setInt(4, vo.getD_price());
          ps.setString(5, vo.getD_content());
