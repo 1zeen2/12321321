@@ -10,12 +10,12 @@ import org.jsoup.select.Elements;
 import com.sist.dao.*;
 import com.sist.vo.DressVO;
 
-public class DressModel {
+public class Dress_2_Model {
 	
 	 private static final DecimalFormat df = new DecimalFormat("#,###");
 
    public static void main(String[] args) {
-      DressModel dm = new DressModel();
+      Dress_2_Model dm = new Dress_2_Model();
       dm.dressData();
    }
 
@@ -23,9 +23,8 @@ public class DressModel {
       DressDAO dao = DressDAO.newInstance();
       int k = 1;
       try {
-         for(int i = 1; i <= 5; i++) {
             Document doc= Jsoup
-                  .connect("https://labitorosa.com/product/list.html?cate_no=24&page="+i).get();
+                  .connect("https://ygdress.com/product/list.html?cate_no=36&page=1").get();
             Elements link = doc.select("ul.prdList strong a");
             for(int j=0; j < link.size(); j++ ) {
             	try {
@@ -57,7 +56,6 @@ public class DressModel {
             		ex.printStackTrace();
             	}
         }
-       }
          System.out.println("저장 완료.");
       }catch(Exception ex) {}
    }
