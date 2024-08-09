@@ -2,41 +2,38 @@ package com.sist.model;
 
 import java.text.DecimalFormat;
 
-import javax.security.auth.Subject;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.sist.dao.*;
-import com.sist.vo.DressVO;
+import com.sist.dao.SuitDAO;
+import com.sist.vo.SuitVO;
 
-public class DressModel {
+public class SuitModel {
 	
 	 private static final DecimalFormat df = new DecimalFormat("#,###");
 
    public static void main(String[] args) {
-      DressModel dm = new DressModel();
-      dm.dressData();
+      SuitModel sm = new SuitModel();
+      sm.suitData();
    }
 
-   public void dressData() {
-      DressDAO dao = DressDAO.newInstance();
+   public void suitData() {
+      SuitDAO dao = SuitDAO.newInstance();
       try {
          for(int i = 1; i <= 5; i++) {
             Document doc= Jsoup
                   .connect("https://labitorosa.com/product/list.html?cate_no=24&page="+i).get();
             Elements link = doc.select("ul.prdList strong a");
-            Elements thumb = doc.select(".thumbnail > a img");
             System.out.println("======= 상세 정보 페이지 ===========");
             for(int j=0; j < link.size(); j++ ) {
             	try {
             		
             		// 링크
+            	   Element d_image = doc.selectFirst("div.xans-element- div:nth-child(2) ul li:first-child div a img");
+                   System.out.println("https:" + d_image.attr("src"));
                    System.out.println("=====");
-                   String d_image = "https:"+thumb.get(j).attr("src");
-                   System.out.println(d_image);
 	               String url = "https://www.labitorosa.com" + link.get(j).attr("href"); 
 	               System.out.println(url);
 	               Document doc2 = Jsoup.connect(url).get();
@@ -54,16 +51,7 @@ public class DressModel {
 	               String formattedPrice = df.format(Long.parseLong(d_price.text()));
 	               System.out.println(formattedPrice + "원");
 	               System.out.println("==============================================================");
-	               DressVO vo = new DressVO();
-//		               vo.setD_no(d_no.text());
-		               vo.setD_image(d_image);
-		               vo.setD_subject(d_subject.text().substring(0, d_subject.text().indexOf("[")));
-		               vo.setD_content(d_content.text());
-		               vo.setD_delivery(d_delivery.text());
-		               vo.setD_return_exchange(d_return_exchange.text());
-		               vo.setD_detail_image(d_detail_image.text());
-		               vo.setD_price(d_price.text());
-		               dao.dressInsert(vo);
+  
             	} 
             	catch (Exception ex) {
             		ex.printStackTrace();
