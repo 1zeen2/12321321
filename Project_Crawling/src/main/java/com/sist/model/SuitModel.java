@@ -22,44 +22,73 @@ public class SuitModel {
    public void suitData() {
       SuitDAO dao = SuitDAO.newInstance();
       try {
-         for(int i = 1; i <= 5; i++) {
             Document doc= Jsoup
-                  .connect("https://labitorosa.com/product/list.html?cate_no=24&page="+i).get();
-            Elements link = doc.select("ul.prdList strong a");
-            System.out.println("======= 상세 정보 페이지 ===========");
-            for(int j=0; j < link.size(); j++ ) {
+            		.connect("https://www.jjinsuit.com/product/list.html?cate_no=55").get();
+
+            Elements link = doc.select("div.prdImg_thumb a");
+            System.out.println(link);
+            Elements thumb = doc.select("div.prdImg_thumb a img");
+            
+            for(int j=0; j <= 140; j++ ) {
             	try {
+//            		
+//            		// 링크
+                   String d_image = "https:" + thumb.get(j).attr("src");
+                   System.out.println(d_image);
             		
-            		// 링크
-            	   Element d_image = doc.selectFirst("div.xans-element- div:nth-child(2) ul li:first-child div a img");
-                   System.out.println("https:" + d_image.attr("src"));
-                   System.out.println("=====");
-	               String url = "https://www.labitorosa.com" + link.get(j).attr("href"); 
+	               String url = "https://www.jjinsuit.com/" + link.get(j).attr("href"); 
 	               System.out.println(url);
+            		
 	               Document doc2 = Jsoup.connect(url).get();
-	               Element d_subject = doc2.selectFirst("div.headingarea");
-	               System.out.println(d_subject.text());
-	               Element d_content = doc2.selectFirst("div#accordInfo ul li:first-child .contents");
-	               System.out.println(d_content.text());
-	               Element d_delivery = doc2.selectFirst("span.delv_price_B");
-	               System.out.println(d_delivery.text());
-	               Elements d_return_exchange = doc2.select("li.depth1 div:nth-child(2) div:nth-child(2)");
-	               System.out.println(d_return_exchange.text());
-	               Element d_detail_image = doc2.selectFirst("#prdDetail > div:nth-child(2) img");
-	               System.out.println("https:" + d_detail_image.attr("ec-data-src"));
-	               Element d_price = doc2.selectFirst("span.quantity_price");
-	               String formattedPrice = df.format(Long.parseLong(d_price.text()));
-	               System.out.println(formattedPrice + "원");
-	               System.out.println("==============================================================");
-  
+	               Element su_subject = doc2.selectFirst(".name");
+	               System.out.println(su_subject.text());
+//	               
+	               Element su_content = doc2.selectFirst("tr:contains(상품간략설명) td"); // ***** 재확인 해야 함
+	               String su_content_text = (su_content != null) ? su_content.text().trim() : "";
+	               System.out.println(su_content_text);
+//	               
+	               Element su_delivery_text = doc2.selectFirst("tr:contains(택배비 안내) td");
+	               String su_delivery = (su_delivery_text != null) ? su_delivery_text.text().trim() : "";
+	               System.out.println(su_delivery);
+
+	               Elements su_return_exchange = doc2.select("#prdDetail li:nth-child(2) a");
+	               System.out.println(su_return_exchange.attr("https://" + "href")); // ****************안됨
+	               
+	               Element su_detail_image_jacket = doc2.selectFirst("div.cont img:nth-child(2)");
+	               System.out.println("https://www.jjinsuit.com" + su_detail_image_jacket);
+	               Element su_detail_image_shirts = doc2.selectFirst("div.cont img:nth-child(3)");
+	               System.out.println("https://www.jjinsuit.com" + su_detail_image_shirts);
+	               Element su_detail_image_acc_element = doc.selectFirst("img[ec-data-src='/0725new/images/tuxedo/acc.jpg']");
+	               String su_detail_image_acc = (su_detail_image_acc_element != null) ? su_detail_image_acc_element.attr("ec-data-src") : "No Image.";
+	               System.out.println("https://www.jjinsuit.com" + su_detail_image_acc);
+	               
+	               Element su_detail_image_size_element = doc.selectFirst("img[ec-data-src='/0725new/images/tuxedo/size.jpg']");
+	               String su_detail_image_size = (su_detail_image_size_element != null)
+	            		    ? su_detail_image_size_element.attr("ec-data-src")
+	            		    : "No Image.";
+	               System.out.println("https://www.jjinsuit.com" + su_detail_image_size);
+	               
+	               Element su_detail_image_info_element = doc.selectFirst("img[ec-data-src='/0725new/images/tuxedo/shopinfo.jpg']");
+	               String su_detail_image_info = (su_detail_image_size_element != null)
+	            		    ? su_detail_image_size_element.attr("ec-data-src")
+	            		    : "No Image.";
+	               System.out.println("https://www.jjinsuit.com" + su_detail_image_info);
+
+	               Element su_price = doc2.selectFirst("div.sale_rate");
+	               String formattedPrice = df.format(Long.parseLong(su_price.attr("item_price")));
+	               System.out.println(formattedPrice + "원");	// 전부 18만원인거 수정해야 함
+
+	               System.out.println("==========" + (j + 1) + "번 째 상세 정보 ==========");
             	} 
             	catch (Exception ex) {
             		ex.printStackTrace();
             	}
         }
-       }
+//       }
          System.out.println("저장 완료.");
-      }catch(Exception ex) {}
+      } catch(Exception ex) {
+    	  
+      }
    }
 
 }
