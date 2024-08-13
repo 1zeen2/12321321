@@ -60,19 +60,18 @@ public class DressDAO {
    public void dressInsert(DressVO vo) {
       try {
          getConnection();
-         String sql = "INSERT INTO dress(d_no, d_image, d_subject, d_content, d_delivery, d_return_exchange, d_detail_image, d_price)"
-        		 	+ " VALUES(fh_fno_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?)";
+         String sql = "INSERT INTO dress(d_no, d_image, d_subject, d_content, d_delivery, d_return_exchange, d_detail_image, d_price) "
+                    + "VALUES(dress_dno_seq.nextval, ?, ?, ?, ?, ?, ?, ?)";
          ps = conn.prepareStatement(sql);
 
          // 각 자리 표시자에 값 설정
-         ps.setInt(1, vo.getD_no()); // d_no
-         ps.setString(2, "https:" + vo.getD_image()); // d_image
-         ps.setString(3, vo.getD_subject());          // d_subject
-         ps.setString(4, vo.getD_content());          // d_content
-         ps.setString(5, vo.getD_delivery());         // d_delivery
-         ps.setString(6, vo.getD_return_exchange());  // d_return_exchange
-         ps.setString(7, vo.getD_detail_image());     // d_detail_image
-         ps.setString(8, vo.getD_price());            // d_price
+         ps.setString(1, "https:" + vo.getD_image()); // d_image
+         ps.setString(2, vo.getD_subject());          // d_subject
+         ps.setString(3, vo.getD_content());          // d_content
+         ps.setString(4, vo.getD_delivery());         // d_delivery
+         ps.setString(5, vo.getD_return_exchange());  // d_return_exchange
+         ps.setString(6, vo.getD_detail_image());     // d_detail_image
+         ps.setString(7, vo.getD_price());            // d_price
 
          // 쿼리 실행
          ps.executeUpdate();

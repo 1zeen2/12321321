@@ -1,83 +1,88 @@
 package com.sist.dao;
 
-import java.util.*;
-
-import com.sist.vo.*;
-
 import java.sql.*;
+import com.sist.vo.SuitVO;
 
 public class SuitDAO {
-	private Connection conn;
-	private PreparedStatement ps;
-	private static SuitDAO dao;
-	private final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
+    private Connection conn;
+    private PreparedStatement ps;
+    private static SuitDAO dao;
+    private final String URL = "jdbc:oracle:thin:@211.238.142.124:1521:XE";
 
-	// 드라이버 등록
-	public SuitDAO() {
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-		} catch (Exception ex) {
+    // 드라이버 등록
+    public SuitDAO() {
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+        } catch (Exception ex) {
+            ex.printStackTrace(); // 예외 로그 추가
+        }
+    }
 
-		}
-	}
+    // 연결
+    public void getConnection() {
+        try {
+            conn = DriverManager.getConnection(URL, "hr1", "happy");
+        } catch (Exception ex) {
+            ex.printStackTrace(); // 예외 로그 추가
+        }
+    }
 
-	// 연결
-	public void getConnection() {
-		try {
-			conn = DriverManager.getConnection(URL, "hr", "happy");
-		} catch (Exception ex) {
+    // 해제
+    public void disConnection() {
+        try {
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace(); // 예외 로그 추가
+        }
+    }
 
-		}
-	}
+    // 싱글턴
+    public static SuitDAO newInstance() {
+        if (dao == null) dao = new SuitDAO();
+        return dao;
+    }
 
-	// 해제
-	public void disConnection() {
-		try {
-			if (ps != null)
-				ps.close();
-			if (conn != null)
-				conn.close();
+    // 기능
+    /*
+     이름                                      널?      유형
+     ----------------------------------------- -------- ----------------------------
+     su_NO                                      NOT NULL NUMBER
+     su_IMAGE                                   NOT NULL VARCHAR2(4000)
+     su_SUBJECT                                 NOT NULL VARCHAR2(4000)
+     su_PRICE                                   NOT NULL NUMBER(10)
+     su_CONTENT                                          CLOB
+     su_DELIVERY                                         VARCHAR2(4000)
+     su_RETURN_EXCHANGE                         NOT NULL VARCHAR2(4000)
+     su_DETAIL_IMAGE                                     CLOB
+     */
+    public void suitInsert(SuitVO vo) {
+        try {
+            getConnection();
+            String sql = "INSERT INTO suit(su_no, su_image, su_subject, su_content, su_delivery, su_return_exchange, su_detail_image, su_price) "
+                       + "VALUES(suit_su_no_seq.nextval, ?, ?, ?, ?, ?, ?, ?)";
+            ps = conn.prepareStatement(sql);
 
-		} catch (Exception ex) {
-		}
-	}
+            // 값 설정
+            ps.setString(1, "https:" + vo.getSu_image()); // su_image
+            ps.setString(2, vo.getSu_subject());          // su_subject
+            ps.setString(3, vo.getSu_content()); // su_content
+            ps.setString(4, vo.getSu_delivery());         // su_delivery
+            ps.setString(5, vo.getSu_return_exchange());  // su_return_exchange
+            ps.setString(6, vo.getSu_detail_image());     // su_detail_image
 
-	// 싱글턴
-	public static SuitDAO newInstance() {
-		if (dao == null)
-			dao = new SuitDAO();
-		return dao;
-	}
+            // 가격이 null이거나 빈 문자열인 경우 기본값 설정 (예: 0)
+            String price = vo.getSu_price();
+            if (price == null || price.trim().isEmpty()) {
+                price = "180000"; // 기본값
+            }
+            ps.setString(7, price); // su_price
 
-	// 기능
-	/*
-	 * 이름 널? 유형 ----------------------------------------- --------
-	 * ---------------------------- su_NO NOT NULL NUMBER su_IMAGE NOT NULL
-	 * VARCHAR2(4000) su_SUBJECT NOT NULL VARCHAR2(4000) su_PRICE NOT NULL
-	 * NUMBER(10) su_CONTENT CLOB su_DELIVERY VARCHAR2(4000) su_RETURN_EXCHANGE NOT
-	 * NULL VARCHAR2(4000) su_DETAIL_IMAGE CLOB
-	 */
-	public void suitInsert(SuitVO vo) {
-		try {
-			getConnection();
-			String sql = "INSERT INTO suit(su_no, su_image, su_subject, su_content, su_delivery, su_return_exchange, su_detail_image, su_price)"
-					+ "VALUES(fh_fno_seq.nextval,?,?,?,?,?,?,?,?)";
-			ps = conn.prepareStatement(sql);
-			ps.setInt(1, vo.getSu_no());
-			ps.setString(2, "https:" + vo.getSu_image());
-			ps.setString(3, vo.getSu_subject_());
-			ps.setString(4, vo.getSu_content());
-			ps.setString(5, vo.getSu_delivery());
-			ps.setString(6, vo.getSu_return_exchange());
-			ps.setString(7, vo.getSu_detail_image());
-			ps.setString(8, vo.getSu_price());
-
-			ps.executeUpdate();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			disConnection();
-		}
-	}
-
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            disConnection();
+        }
+    }
 }

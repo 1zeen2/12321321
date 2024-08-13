@@ -40,8 +40,15 @@ public class DressModel {
                   System.out.println(d_content.text());
                   Element d_delivery = doc2.selectFirst("span.delv_price_B");
                   System.out.println(d_delivery.text());
-                  Elements d_return_exchange = doc2.select("li.depth1 div:nth-child(2) div:nth-child(2)");
-                  System.out.println(d_return_exchange.text());
+                  
+//                  Elements d_return_exchange = doc2.select("li.depth1 div:nth-child(2) div:nth-child(2)");
+//                  System.out.println(d_return_exchange.text());
+               
+                  Element d_return_exchange = doc2.select("div.contents").first(); // 첫 번째 div.contents 요소만 선택
+                  String content = d_return_exchange.text(); // 텍스트를 추출
+                  System.out.println(content); // 원하는 부분만 출력
+
+                  
                   Element d_detail_image = doc2.selectFirst("#prdDetail > div:nth-child(2) img");
                   System.out.println("https:" + d_detail_image.attr("ec-data-src"));
                   Element d_price = doc2.selectFirst("span.quantity_price");
