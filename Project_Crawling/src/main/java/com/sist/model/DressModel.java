@@ -39,7 +39,7 @@ public class DressModel {
                   Element d_content = doc2.selectFirst("#accordInfo li:first-child");
                   System.out.println(d_content.text());
                   Element d_delivery = doc2.selectFirst("span.delv_price_B");
-                  System.out.println(d_delivery.text());
+                  System.out.println(d_delivery.text()); 
                   
 //                  Elements d_return_exchange = doc2.select("li.depth1 div:nth-child(2) div:nth-child(2)");
 //                  System.out.println(d_return_exchange.text());
@@ -54,7 +54,7 @@ public class DressModel {
                   Element d_price = doc2.selectFirst("span.quantity_price");
                   String formattedPrice = df.format(Long.parseLong(d_price.text().replaceAll("[^0-9]", "")));
                   System.out.println(formattedPrice + "원");
-                  System.out.println("==============================================================");
+                  System.out.println("===========" + i + (j + 1) + "번째 상세보기 완료=============");
                   
                   DressVO vo = new DressVO();
                   vo.setD_no(0);
