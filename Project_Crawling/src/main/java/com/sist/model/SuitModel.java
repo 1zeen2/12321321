@@ -1,105 +1,103 @@
 package com.sist.model;
 
 import java.text.DecimalFormat;
-
+import java.util.Random;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import com.sist.dao.SuitDAO;
-import com.sist.vo.DressVO;
 import com.sist.vo.SuitVO;
 
 public class SuitModel {
-	
-	 private static final DecimalFormat df = new DecimalFormat("#,###");
 
-   public static void main(String[] args) {
-      SuitModel sm = new SuitModel();
-      sm.suitData();
-   }
+    private static final DecimalFormat df = new DecimalFormat("#,###");
+    private static final Random random = new Random(); // Random 객체 생성
 
-   public void suitData() {
-      SuitDAO dao = SuitDAO.newInstance();
-      try {
-            Document doc= Jsoup
-            		.connect("https://www.jjinsuit.com/product/list.html?cate_no=55").get();
+    public static void main(String[] args) {
+        SuitModel sm = new SuitModel();
+        sm.suitData();
+    }
+
+    public void suitData() {
+        SuitDAO dao = SuitDAO.newInstance();
+        try {
+            Document doc = Jsoup.connect("https://www.jjinsuit.com/product/list.html?cate_no=55").get();
             Elements link = doc.select("div.prdImg_thumb a");
-            System.out.println(link);
             Elements thumb = doc.select("div.prdImg_thumb a img");
-            
-            for(int j=0; j <= 140; j++ ) {
-            	try {
-                   String d_image = "https:" + thumb.get(j).attr("src");
-                   System.out.println(d_image);
-            		
-	               String url = "https://www.jjinsuit.com/" + link.get(j).attr("href"); 
-	               System.out.println(url);
-            		
-	               Document doc2 = Jsoup.connect(url).get();
-	               Element su_subject = doc2.selectFirst(".name");
-	               System.out.println(su_subject.text());
 
-	               Element su_content_Text = doc2.select("tr:has(th:contains(상품간략설명)) td").first();
-	               String su_content = (su_content_Text != null) ? su_content_Text.text().trim() : "";
-	               System.out.println(su_content);
+            for (int j = 0; j <= 140; j++) {
+                try {
+                    String su_image = "https:" + thumb.get(j).attr("src");
+                    if (su_image != null && !su_image.trim().isEmpty()) {
+                        if (!su_image.startsWith("http:") && !su_image.startsWith("https:")) {
+                            su_image = "https:" + su_image; // 기본으로 https 사용
+                        }
+                    }
+                    System.out.println(su_image);
 
-	               Element su_delivery_text = doc2.selectFirst("tr:contains(택배비 안내) td");
-	               String su_delivery = (su_delivery_text != null) ? su_delivery_text.text().trim() : "";
-	               System.out.println(su_delivery);
+                    String url = "https://www.jjinsuit.com/" + link.get(j).attr("href");
+                    System.out.println(url);
 
-	               Elements su_return_exchange = doc2.select("#prdDetail li:nth-child(2) a");
-	               System.out.println(su_return_exchange.attr("https://" + "href")); 
-	            
-	               Elements su_detail_images = doc2.select("div.cont img"); // div.cont 내부의 모든 img 태그 선택
+                    Document doc2 = Jsoup.connect(url).get();
+                    Element su_subject = doc2.selectFirst(".name");
+                    System.out.println(su_subject.text());
 
-	               StringBuilder su_detail_image_urls = new StringBuilder(); // 이미지 URL들을 저장할 StringBuilder
+                    Element su_content_Text = doc2.select("tr:has(th:contains(상품간략설명)) td").first();
+                    String su_content = (su_content_Text != null) ? su_content_Text.text().trim() : "";
+                    System.out.println(su_content);
 
-	               for (Element img : su_detail_images) {
-	                   
-	                   String imgSrc = img.attr("ec-data-src"); // ec-data-src 속성의 값을 가져옴
-	                   
-	                   if (!imgSrc.startsWith("http")) {
-	                       imgSrc = "https:" + imgSrc; // 상대 경로를 절대 경로로 변환
-	                   }
-	                   
-	                   su_detail_image_urls.append(imgSrc).append(", "); // StringBuilder에 추가
-	               }
+                    Element su_delivery_text = doc2.selectFirst("tr:contains(택배비 안내) td");
+                    String su_delivery = (su_delivery_text != null) ? su_delivery_text.text().trim() : "";
+                    System.out.println(su_delivery);
 
-	               String su_detail_image = su_detail_image_urls.toString();
-	               if (su_detail_image.endsWith(", ")) { 
-	            	   su_detail_image = su_detail_image.substring(0, su_detail_image.length() - 2); // 마지막에 추가된 쉼표와 공백을 제거
-	               }
+                    Elements su_return_exchange = doc2.select("#prdDetail li:nth-child(2) a");
+                    System.out.println(su_return_exchange.attr("https://" + "href"));
 
-	               System.out.println(su_detail_image);
+                    Elements su_detail_images = doc2.select("div.cont img");
+                    StringBuilder su_detail_image_urls = new StringBuilder();
 
-	               
-	               Element su_price = doc2.selectFirst("div.sale_rate");
-	               String formattedPrice = df.format(Long.parseLong(su_price.attr("item_price")));
-	               System.out.println(formattedPrice + "원");	// 전부 18만원인거 수정해야 함
+                    for (Element img : su_detail_images) {
+                        String imgSrc = img.attr("ec-data-src");
+                        if (!imgSrc.startsWith("http")) {
+                            imgSrc = "https:" + imgSrc;
+                        }
+                        su_detail_image_urls.append(imgSrc).append(", ");
+                    }
 
-	               System.out.println("==========" + (j + 1) + "번 째 상세 정보 ==========");
-	               
-	               SuitVO vo = new SuitVO();
-	                  vo.setSu_no(j);
-	                  vo.setSu_image(d_image);
-	                  vo.setSu_subject(su_subject.text());
-	                  vo.setSu_content(su_content);
-	                  vo.setSu_delivery(su_delivery);
-	                  vo.setSu_return_exchange(su_return_exchange.text());
-	                  vo.setSu_detail_image(su_detail_image);
-	                  vo.setSu_price(su_price.text());
-	                  
-	                  dao.suitInsert(vo);
-            	} catch (Exception ex) {
-            		ex.printStackTrace();
-            	}
+                    String su_detail_image = su_detail_image_urls.toString();
+                    if (su_detail_image.endsWith(", ")) {
+                        su_detail_image = su_detail_image.substring(0, su_detail_image.length() - 2);
+                    }
+                    System.out.println(su_detail_image);
+
+                    // 가격을 180,000원에서 450,000원 사이의 랜덤 값으로 설정
+                    int minPrice = 180000;
+                    int maxPrice = 450000;
+                    int price = minPrice + (random.nextInt((maxPrice - minPrice) / 5000 + 1) * 5000);
+                    String formattedPrice = df.format(price) + "원";
+                    System.out.println(formattedPrice);
+
+                    System.out.println("==========" + (j + 1) + "번 째 상세 정보 ==========");
+
+                    SuitVO vo = new SuitVO();
+                    vo.setSu_no(j);
+                    vo.setSu_image(su_image);
+                    vo.setSu_subject(su_subject.text());
+                    vo.setSu_content(su_content);
+                    vo.setSu_delivery(su_delivery);
+                    vo.setSu_return_exchange(su_return_exchange.text());
+                    vo.setSu_detail_image(su_detail_image);
+                    vo.setSu_price(formattedPrice); // 가격을 문자열로 설정
+
+                    dao.suitInsert(vo);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
-         System.out.println("저장 완료.");
-      } catch(Exception ex) {
-    	  
-      }
-   }
-
+            System.out.println("저장 완료.");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

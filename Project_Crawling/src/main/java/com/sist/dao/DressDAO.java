@@ -65,7 +65,7 @@ public class DressDAO {
          ps = conn.prepareStatement(sql);
 
          // 각 자리 표시자에 값 설정
-         ps.setString(1, "https:" + vo.getD_image()); // d_image
+         ps.setString(1, vo.getD_image()); // d_image
          ps.setString(2, vo.getD_subject());          // d_subject
          ps.setString(3, vo.getD_content());          // d_content
          ps.setString(4, vo.getD_delivery());         // d_delivery
