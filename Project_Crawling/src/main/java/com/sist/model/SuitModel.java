@@ -24,22 +24,33 @@ public class SuitModel {
         try {
             Document doc = Jsoup.connect("https://www.jjinsuit.com/product/list.html?cate_no=55").get();
             Elements link = doc.select("div.prdImg_thumb a");
-            Elements thumb = doc.select("div.prdImg_thumb a img");
+            // '/tiny/'가 포함된 이미지 선택
+//            Elements thumb = doc.select("div.prdImg_thumb img[src*='/tiny/']");
+//            Elements thumb = doc.select("div.prdImg_thumb a img:nth-child(2)");
+//            Elements thumb = doc.select("div.prdImg_thumb img.prdImg_hover");
+            
+            for (int j = 0; j < 141; j++) {
+            	try {
+//                    String su_image = "https:" + thumb.get(j).attr("src");
+//                    if (su_image != null && !su_image.trim().isEmpty()) {
+//                        if (!su_image.startsWith("http:") && !su_image.startsWith("https:")) {
+//                            su_image = "https:" + su_image; // 기본으로 https 사용
+//                        }
+//                    }
+//                    System.out.println(su_image);
 
-            for (int j = 0; j <= 140; j++) {
-                try {
-                    String su_image = "https:" + thumb.get(j).attr("src");
-                    if (su_image != null && !su_image.trim().isEmpty()) {
-                        if (!su_image.startsWith("http:") && !su_image.startsWith("https:")) {
-                            su_image = "https:" + su_image; // 기본으로 https 사용
-                        }
-                    }
-                    System.out.println(su_image);
-
+                    // 링크와 관련된 URL 처리
                     String url = "https://www.jjinsuit.com/" + link.get(j).attr("href");
                     System.out.println(url);
-
+                    
                     Document doc2 = Jsoup.connect(url).get();
+                    
+                    Element su_image_temp = doc2.selectFirst(".thumbnail_hidden img");
+                    String su_image = su_image_temp.attr("src");
+                    su_image = formatImageUrl(su_image);
+                    System.out.println(su_image);
+
+//                    Document doc2 = Jsoup.connect(url).get();
                     Element su_subject = doc2.selectFirst(".name");
                     System.out.println(su_subject.text());
 
@@ -53,14 +64,13 @@ public class SuitModel {
 
                     Elements su_return_exchange = doc2.select("#prdDetail li:nth-child(2) a");
                     System.out.println(su_return_exchange.attr("https://" + "href"));
-
                     Elements su_detail_images = doc2.select("div.cont img");
                     StringBuilder su_detail_image_urls = new StringBuilder();
 
                     for (Element img : su_detail_images) {
                         String imgSrc = img.attr("ec-data-src");
-                        if (!imgSrc.startsWith("http")) {
-                            imgSrc = "https:" + imgSrc;
+                        if (!imgSrc.startsWith("//jjinhomme")) {
+                        	  imgSrc = "https://www.jjinsuit.com" + imgSrc;
                         }
                         su_detail_image_urls.append(imgSrc).append(", ");
                     }
@@ -100,4 +110,21 @@ public class SuitModel {
             ex.printStackTrace();
         }
     }
+    private String formatImageUrl(String imgSrc) {
+        if (imgSrc == null || imgSrc.isEmpty()) {
+            return "";
+        }
+        if (imgSrc.startsWith("//")) {
+            imgSrc = "https:" + imgSrc;
+        } else if (imgSrc.startsWith("/")) {
+            imgSrc = "https://www.jjinsuit.com" + imgSrc;
+        }
+
+        // 이미지 URL이 'big'을 포함하는 경우에만 반환
+        if (imgSrc.contains("/big/")) {
+            return imgSrc;
+        }
+        
+        return "";	
+	}
 }
