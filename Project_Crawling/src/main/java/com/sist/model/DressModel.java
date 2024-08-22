@@ -48,7 +48,7 @@ public class DressModel {
                         System.out.println(d_subject.text().indexOf("["));
                         
                         Element d_content = doc2.selectFirst("#accordInfo li:first-child");
-                        System.out.println(d_content.text());
+                        System.out.println(d_content.text()); 
                         
                         Element d_delivery = doc2.selectFirst("span.delv_price_B");
                         System.out.println(d_delivery.text()); 
