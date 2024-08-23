@@ -27,8 +27,8 @@ public class DressModel {
                 String thum = img_temp.attr("src");
 
                 // 만약 첫 번째 큰따옴표와 두 번째 큰따옴표 사이의 문자열을 추출하려는 경우
-                int startIndex = thum.indexOf("\"") + 1; // 첫 번째 큰따옴표 다음
-                int endIndex = thum.indexOf("\"", startIndex); // 두 번째 큰따옴표
+                int startIndex = thum.indexOf("src=\"") + 5;
+                int endIndex = thum.indexOf(".jpg", startIndex) + 4;
 
                 if (startIndex > 0 && endIndex > startIndex) {
                     String d_image_temp = thum.substring(startIndex, endIndex);
@@ -73,8 +73,9 @@ public class DressModel {
                         String d_detail_image2 = (d_detail_image2_temp != null) ? "https:" + d_detail_image2_temp.attr("ec-data-src") : "";
                         System.out.println(d_detail_image2);
 
-                        Element d_detail_image3 = doc2.selectFirst("#prdDetail > div:nth-child(2) img:nth-child(3)");
-                        System.out.println("https:" + d_detail_image3.attr("ec-data-src"));
+                        Element d_detail_image3_temp = doc2.selectFirst("#prdDetail > div:nth-child(2) img:nth-child(3)");
+                        String d_detail_image3 = (d_detail_image3_temp != null) ? "https:" + d_detail_image3_temp.attr("ec-data-src") : "";
+                        System.out.println("https:" + d_detail_image3);
 
                         Element d_price_temp = doc2.selectFirst("span.quantity_price");
                         String priceText = d_price_temp.text().replaceAll("[^0-9]", "");
@@ -96,7 +97,7 @@ public class DressModel {
                         vo.setD_return_exchange(d_return_exchange);
                         vo.setD_detail_image(d_detail_image.attr("ec-data-src"));
                         vo.setD_detail_image2(d_detail_image2);
-                        vo.setD_detail_image3(d_detail_image3.attr("ec-data-src"));
+                        vo.setD_detail_image3(d_detail_image3);
                         vo.setD_price(formattedPrice); // 포맷팅된 가격 저장
 
                         dao.dressInsert(vo);
